@@ -139,6 +139,13 @@
       cursor: pointer;
     }
 
+    .card-price {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #b45309;
+      margin: 0.2rem 0 0.15rem;
+    }
+
     .image-counter {
       font-size: 0.8rem;
       color: var(--muted);
@@ -307,8 +314,9 @@
         });
     });
 
-    function getWhatsAppLink(productName, imageUrl) {
+    function getWhatsAppLink(productName, imageUrl, price) {
       let text = 'Salam admin Loom & Layer Boutique, saya berminat nak order item ini:\n\n*Produk:* ' + productName;
+      if (price) text += '\n*Harga:* ' + price;
       if (imageUrl) text += '\n*Gambar:* ' + imageUrl;
       return 'https://wa.me/' + PHONE_NUMBER + '?text=' + encodeURIComponent(text);
     }
@@ -381,13 +389,19 @@
         counter.className = 'image-counter';
         counter.textContent = images.length + ' gambar';
         titleWrap.appendChild(title);
+        if (product.price) {
+          const priceEl = document.createElement('div');
+          priceEl.className = 'card-price';
+          priceEl.textContent = product.price;
+          titleWrap.appendChild(priceEl);
+        }
         titleWrap.appendChild(counter);
         content.appendChild(titleWrap);
 
         // Butang WhatsApp
         const waBtn = document.createElement('a');
         waBtn.className = 'whatsapp-btn';
-        waBtn.href = getWhatsAppLink(product.name, mainImgUrl);
+        waBtn.href = getWhatsAppLink(product.name, mainImgUrl, product.price);
         waBtn.target = '_blank';
         waBtn.rel = 'noopener';
         waBtn.innerHTML = WA_ICON + ' Tempah via WhatsApp';
@@ -439,8 +453,9 @@
       const img = product.images[activeImageIndex];
       document.getElementById('modalImg').src = img.url;
       document.getElementById('modalCaption').textContent =
-        product.name + ' (' + (activeImageIndex + 1) + '/' + product.images.length + ')';
-      document.getElementById('modalWhatsAppBtn').href = getWhatsAppLink(product.name, img.url);
+        product.name + (product.price ? ' - ' + product.price : '') +
+        ' (' + (activeImageIndex + 1) + '/' + product.images.length + ')';
+      document.getElementById('modalWhatsAppBtn').href = getWhatsAppLink(product.name, img.url, product.price);
       const multi = product.images.length > 1;
       document.getElementById('prevBtn').style.display = multi ? '' : 'none';
       document.getElementById('nextBtn').style.display = multi ? '' : 'none';
